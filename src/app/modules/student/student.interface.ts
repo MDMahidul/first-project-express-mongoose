@@ -1,4 +1,4 @@
-import {Model} from 'mongoose';
+import { Model } from 'mongoose';
 
 // 1. Create an interface representing a document in MongoDB.
 export type TGuardian = {
@@ -22,7 +22,7 @@ export type TLocalGuardian = {
 };
 export type TStudent = {
   id: string;
-  password:string;
+  password: string;
   name: TUserName;
   gender: 'male' | 'female' | 'others';
   dateOfBirth: string;
@@ -36,13 +36,12 @@ export type TStudent = {
   localGuardian: TLocalGuardian;
   profileImage?: string;
   isActive: 'active' | 'blocked';
+  isDeleted: boolean;
 };
 // for creating static
-export interface StudentModel extends Model<TStudent>{
-  isUserExists(id:string):Promise<TStudent | null>
+export interface StudentModel extends Model<TStudent> {
+  isUserExists(id: string): Promise<TStudent | null>;
 }
-
-
 
 // for instance
 // Put all user instance methods in this type:

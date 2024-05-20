@@ -13,9 +13,7 @@ const userNameValidationSchema = z.object({
       },
     ),
   middleName: z.string().optional(),
-  lastName: z
-    .string()
-    .nonempty('Last name is required')
+  lastName: z.string().nonempty('Last name is required'),
 });
 
 // Sub-schema 2: Guardian
@@ -59,8 +57,9 @@ const studentValidationSchema = z.object({
   localGuardian: localGuardianValidationSchema,
   profileImage: z.string().optional(),
   isActive: z.enum(['active', 'blocked']).default('active'),
+  isDelete: z.boolean(),
 });
 
 export type Student = z.infer<typeof studentValidationSchema>;
 
-export default studentValidationSchema ;
+export default studentValidationSchema;

@@ -148,6 +148,10 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // pre save middleware/hook : will work on create() and save()
@@ -163,12 +167,25 @@ studentSchema.pre('save', async function (next) {
 });
 
 //post save middleware/ hook
-studentSchema.post('save', function (doc,next) {
-  doc.password='';
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
   //console.log(this, 'post hook : we saved our data');
-
   next();
 });
+
+// Query middleware
+studentSchema.pre('find', function (next) {
+  this.find({isDeleted:{$ne:true}})
+  next()
+});
+studentSchema.pre('findOne', function (next) {
+  this.find({isDeleted:{$ne:true}})
+  next()
+});
+studentSchema.pre('aggregate',function(next){
+  this.pipeline().unshift({$match:{isDeleted: {$ne:true}}});
+  next();
+})
 
 // creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
