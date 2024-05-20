@@ -38,7 +38,7 @@ const localGuardianValidationSchema = z.object({
 
 // Main schema: Student
 const studentValidationSchema = z.object({
-  id: z.string().nonempty('ID is required').uuid('Invalid ID format'),
+  id: z.string().nonempty('ID is required'),
   name: userNameValidationSchema,
   gender: z.enum(['male', 'female', 'others'], {
     errorMap: () => ({
