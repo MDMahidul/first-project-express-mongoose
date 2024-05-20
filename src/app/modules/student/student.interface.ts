@@ -36,11 +36,18 @@ export type TStudent = {
   profileImage?: string;
   isActive: 'active' | 'blocked';
 };
-
-// Put all user instance methods in this type:
-export type StudentMethods = {
+// for creating static
+export interface StudentModel extends Model<TStudent>{
   isUserExists(id:string):Promise<TStudent | null>
 }
 
+
+
+// for instance
+// Put all user instance methods in this type:
+/* export type StudentMethods = {
+  isUserExists(id:string):Promise<TStudent | null>
+} */
+
 // Create a new Model type that knows about students methods.
-export type StudentModel = Model<TStudent,Record<string,never>,StudentMethods>
+/* export type StudentModel = Model<TStudent,Record<string,never>,StudentMethods> */
