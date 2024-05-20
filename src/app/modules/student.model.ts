@@ -1,4 +1,5 @@
 import validator from 'validator';
+import bcrypt from 'bcrypt';
 import { Schema, model, connect } from 'mongoose';
 import {
   TGuardian,
@@ -7,6 +8,8 @@ import {
   StudentModel,
   TUserName,
 } from './student/student.interface';
+import config from '../config';
+import { NextFunction } from 'express';
 
 // 2. Create a Schema corresponding to the document interface.
 //sub-schema-1
@@ -81,8 +84,13 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 //main schema
-const studentSchema = new Schema<TStudent,StudentModel>({
-  id: { type: String, required: true, unique: true },
+const studentSchema = new Schema<TStudent, StudentModel>({
+  id: { type: String, required: [true, 'ID is required'], unique: true },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    maxlength: [20, "Password can't be more than 20 digit"],
+  },
   name: { type: userNameSchema, required: [true, 'User name is required'] },
   gender: {
     type: String,
@@ -142,14 +150,32 @@ const studentSchema = new Schema<TStudent,StudentModel>({
   },
 });
 
+// pre save middleware/hook : will work on create() and save()
+studentSchema.pre('save', async function (next) {
+  //console.log(this,'pre hook : we will save the data');
+  const user = this; //document
+  //hashing password and save to db
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+//post save middleware/ hook
+studentSchema.post('save', function (doc,next) {
+  doc.password='';
+  //console.log(this, 'post hook : we saved our data');
+
+  next();
+});
+
 // creating a custom static method
-studentSchema.statics.isUserExists=async function(id:string){
-  const existingUser = await Student.findOne({id});
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
 
   return existingUser;
-}
-
-
+};
 
 //createing custom instance method
 /* studentSchema.methods.isUserExists = async function(id:string){
@@ -158,4 +184,4 @@ studentSchema.statics.isUserExists=async function(id:string){
 } */
 
 // 3. Create a Model.
-export const Student = model<TStudent,StudentModel>('Student', studentSchema);
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);
