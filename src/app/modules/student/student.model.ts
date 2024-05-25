@@ -1,5 +1,3 @@
-import validator from 'validator';
-import bcrypt from 'bcrypt';
 import { Schema, model, connect } from 'mongoose';
 import {
   TGuardian,
@@ -8,8 +6,6 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
-import config from '../../config';
-import { NextFunction } from 'express';
 
 // 2. Create a Schema corresponding to the document interface.
 //sub-schema-1
@@ -156,31 +152,14 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 );
 
 //mongoose virtual
-studentSchema.virtual('fullName').get(function () {
+/* studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
-
-// pre save middleware/hook : will work on create() and save()
-//console.log(this,'pre hook : we will save the data');
-//hashing password and save to db
-/* studentSchema.pre('save', async function (next) {
-  const user = this; //document
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
  */
-//post save middleware/ hook
-//console.log(this, 'post hook : we saved our data');
-/* studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-}); */
+
 
 // Query middleware
-/* studentSchema.pre('find', function (next) {
+studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
@@ -192,13 +171,13 @@ studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
- */
+
 // creating a custom static method
-/* studentSchema.statics.isUserExists = async function (id: string) {
+studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
 
   return existingUser;
-}; */
+};
 
 //createing custom instance method
 /* studentSchema.methods.isUserExists = async function(id:string){
