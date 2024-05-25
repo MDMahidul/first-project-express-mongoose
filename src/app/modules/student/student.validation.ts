@@ -36,8 +36,8 @@ const localGuardianValidationSchema = z.object({
 
 // Main schema: Student
 const studentValidationSchema = z.object({
-  id: z.string().nonempty('ID is required'),
-  password: z.string().nonempty('Password is required').max(20),
+  id: z.string(),
+  password: z.string().nonempty('Password is required').max(20).optional(),
   name: userNameValidationSchema,
   gender: z.enum(['male', 'female', 'others'], {
     errorMap: () => ({
@@ -60,6 +60,6 @@ const studentValidationSchema = z.object({
   isDelete: z.boolean(),
 });
 
-export type Student = z.infer<typeof studentValidationSchema>;
+//export type Student = z.infer<typeof studentValidationSchema>;
 
 export default studentValidationSchema;

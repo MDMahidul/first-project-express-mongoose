@@ -1,6 +1,12 @@
-import { Model } from 'mongoose';
+import { Model,Types } from 'mongoose';
 
 // 1. Create an interface representing a document in MongoDB.
+export type TUserName = {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+};
+
 export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
@@ -9,11 +15,7 @@ export type TGuardian = {
   motherOccupation: string;
   motherContactNo: string;
 };
-export type TUserName = {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-};
+
 export type TLocalGuardian = {
   name: string;
   occupation: string;
@@ -22,6 +24,7 @@ export type TLocalGuardian = {
 };
 export type TStudent = {
   id: string;
+  user:Types.ObjectId;
   password: string;
   name: TUserName;
   gender: 'male' | 'female' | 'others';
@@ -35,7 +38,6 @@ export type TStudent = {
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   profileImage?: string;
-  isActive: 'active' | 'blocked';
   isDeleted: boolean;
 };
 // for creating static

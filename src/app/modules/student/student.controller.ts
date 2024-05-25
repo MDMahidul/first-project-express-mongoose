@@ -4,31 +4,7 @@ import studentValidationSchema from './student.validation';
 /* import studentValidationSchema from './student.validation'; */
 
 
-const createStudent = async (req: Request, res: Response) => {
-  try {
-    const { student: studentData } = req.body;
 
-    //joi validation schema
-    /*  const { error, value } = studentValidationSchema.validate(studentData); */
-
-    //zod validation schema
-    const zodparseData=studentValidationSchema.parse(studentData);
-
-    const result = await StudentServices.createStudentIntoDB(zodparseData);
-
-    res.status(200).json({
-      success: true,
-      message: 'Student is created successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong!',
-      error: err,
-    });
-  }
-};
 
 const getAllStudents = async (req: Request, res: Response) => {
   try {
@@ -88,7 +64,6 @@ const deleteSingleStudent=async(req:Request,res:Response)=>{
 }
 
 export const StudentController = {
-  createStudent,
   getAllStudents,
   getSingleStudent,
   deleteSingleStudent,
