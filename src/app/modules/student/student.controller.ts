@@ -1,12 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { StudentServices } from './student.service';
 import studentValidationSchema from './student.validation';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
 /* import studentValidationSchema from './student.validation'; */
 
-const getAllStudents = async (req: Request, res: Response,next:NextFunction) => {
-  try {
+
+
+const getAllStudents = catchAsync(async (req, res) => {
+
     const result = await StudentServices.getAllAtudentsFromDB();
 
     sendResponse(res, {
@@ -15,13 +18,10 @@ const getAllStudents = async (req: Request, res: Response,next:NextFunction) => 
       message: 'Students data retrieved successfully!',
       data: result,
     });
-  } catch (err) {
-    next(err);
-  }
-};
+});
 
-const getSingleStudent = async (req: Request, res: Response,next:NextFunction) => {
-  try {
+const getSingleStudent =catchAsync( async (req, res) => {
+
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
 
@@ -31,14 +31,11 @@ const getSingleStudent = async (req: Request, res: Response,next:NextFunction) =
       message: 'Student data retrieved successfully!',
       data: result,
     });
-  } catch (err) {
-    next(err);
-  }
-};
+})
 
-const deleteSingleStudent=async(req:Request,res:Response,next:NextFunction)=>{
-  try {
-    const {studentId}=req.params;
+const deleteSingleStudent = catchAsync(async (req, res) => {
+
+    const { studentId } = req.params;
     const result = await StudentServices.deleteSingleStudentFromDB(studentId);
 
     sendResponse(res, {
@@ -47,11 +44,8 @@ const deleteSingleStudent=async(req:Request,res:Response,next:NextFunction)=>{
       message: 'Student data deleted  successfully!',
       data: result,
     });
-
-  } catch (err) {
-    next(err);
-  }
-}
+  
+});
 
 export const StudentController = {
   getAllStudents,
