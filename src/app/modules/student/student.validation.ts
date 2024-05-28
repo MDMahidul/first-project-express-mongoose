@@ -35,31 +35,35 @@ const localGuardianValidationSchema = z.object({
 });
 
 // Main schema: Student
-const studentValidationSchema = z.object({
-  id: z.string(),
-  //password: z.string().nonempty('Password is required').max(20).optional(),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female', 'others'], {
-    errorMap: () => ({
-      message: "Gender can only be 'male', 'female', or 'others'",
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female', 'others'], {
+        errorMap: () => ({
+          message: "Gender can only be 'male', 'female', or 'others'",
+        }),
+      }),
+      dateOfBirth: z.string().nonempty('DOB is required'),
+      email: z
+        .string()
+        .nonempty('Email is required')
+        .email('Invalid email format'),
+      contactNo: z.string().nonempty('Contact is required'),
+      emergencyContactNo: z.string().nonempty('Emergency contact is required'),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
+        .optional(),
+      presentAddress: z.string().nonempty('Present address is required'),
+      permanentAddress: z.string().nonempty('Permanent address is required'),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImage: z.string().optional(),
     }),
   }),
-  dateOfBirth: z.string().nonempty('DOB is required'),
-  email: z.string().nonempty('Email is required').email('Invalid email format'),
-  contactNo: z.string().nonempty('Contact is required'),
-  emergencyContactNo: z.string().nonempty('Emergency contact is required'),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
-    .optional(),
-  presentAddress: z.string().nonempty('Present address is required'),
-  parmanentAddress: z.string().nonempty('Permanent address is required'),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImage: z.string().optional(),
-  isActive: z.enum(['active', 'blocked']).default('active'),
-  isDelete: z.boolean(),
 });
 
 //export type Student = z.infer<typeof studentValidationSchema>;
 
-export default studentValidationSchema;
+export const studentValidations={createStudentValidationSchema};
