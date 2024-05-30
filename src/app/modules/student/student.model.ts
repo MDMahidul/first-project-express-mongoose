@@ -122,7 +122,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       trim: true,
       required: [true, 'P.Address is required'],
     },
-    parmanentAddress: {
+    permanentAddress: {
       type: String,
       trim: true,
       required: [true, 'Par.Address is required'],
@@ -133,6 +133,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'LG is required'],
     },
     profileImage: { type: String },
+    admissionSemester:{type:Schema.Types.ObjectId,ref:'AcademicSemester'},
     /* isActive: {
       type: String,
       trim: true,

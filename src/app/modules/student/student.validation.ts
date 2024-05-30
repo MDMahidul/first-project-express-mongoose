@@ -45,7 +45,7 @@ const createStudentValidationSchema = z.object({
           message: "Gender can only be 'male', 'female', or 'others'",
         }),
       }),
-      dateOfBirth: z.date().optional(),
+      dateOfBirth: z.string().optional(),
       email: z
         .string()
         .nonempty('Email is required')
@@ -60,6 +60,7 @@ const createStudentValidationSchema = z.object({
       guardian: guardianValidationSchema,
       localGuardian: localGuardianValidationSchema,
       profileImage: z.string().optional(),
+      admissionSemester:z.string()
     }),
   }),
 });

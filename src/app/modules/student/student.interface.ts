@@ -34,10 +34,11 @@ export type TStudent = {
   emergencyContactNo: string;
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'O+' | 'O-' | 'AB+' | 'AB-';
   presentAddress: string;
-  parmanentAddress: string;
+  permanentAddress: string;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   profileImage?: string;
+  admissionSemester:Types.ObjectId;
   isDeleted: boolean;
 };
 // for creating static
