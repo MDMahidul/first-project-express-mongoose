@@ -6,6 +6,8 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 // 2. Create a Schema corresponding to the document interface.
 //sub-schema-1
@@ -180,7 +182,6 @@ studentSchema.pre('aggregate', function (next) {
 // creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
-
   return existingUser;
 };
 
@@ -189,6 +190,8 @@ studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser =await Student.findOne({id});
   return existingUser;
 } */
+
+
 
 // 3. Create a Model.
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
