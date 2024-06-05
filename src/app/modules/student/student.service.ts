@@ -27,6 +27,9 @@ const getSingleStudentFromDB = async (id: string) => {
         path: 'academicFaculty',
       },
     });
+    if(!result){
+      throw new AppError(httpStatus.NOT_FOUND,'Invalid student ID!')
+    }
   return result;
 };
 

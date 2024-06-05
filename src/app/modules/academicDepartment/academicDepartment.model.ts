@@ -14,7 +14,7 @@ const academicDepartmentSchema = new Schema(
   { timestamps: true },
 );
 
-academicDepartmentSchema.pre('save', async function (next) {
+/* academicDepartmentSchema.pre('save', async function (next) {
   const isDepartmentExist = await AcademicDepartment.findOne({
     name: this.name,
   });
@@ -23,7 +23,7 @@ academicDepartmentSchema.pre('save', async function (next) {
     throw new AppError(httpStatus.CONFLICT, 'This department already exist');
   }
   next();
-});
+}); */
 
 academicDepartmentSchema.pre('findOneAndUpdate', async function name(next) {
   const query = this.getQuery();

@@ -4,6 +4,8 @@ import { TErrorSources } from '../interface/error';
 import config from '../config';
 import { handleZodError } from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
+import handleCastError from '../errors/handleCastError';
+import handleDuplicateError from '../errors/handleDuplicateError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // set default values
@@ -22,6 +24,16 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorSources = simplified?.errorSources;
   } else if (err?.name === 'ValidationError') {
     const simplified = handleValidationError(err);
+    statusCode = simplified?.statusCode;
+    message = simplified?.message;
+    errorSources = simplified?.errorSources;
+  } else if (err?.name === 'CastError') {
+    const simplified = handleCastError(err);
+    statusCode = simplified?.statusCode;
+    message = simplified?.message;
+    errorSources = simplified?.errorSources;
+  } else if (err?.code === 11000) {
+    const simplified = handleDuplicateError(err);
     statusCode = simplified?.statusCode;
     message = simplified?.message;
     errorSources = simplified?.errorSources;
