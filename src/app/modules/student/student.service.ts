@@ -6,7 +6,6 @@ import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 
 const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
-  console.log('base query', query);
   // create a copy of the base query to avoid mutation
   const queryObj = { ...query };
 
@@ -26,10 +25,12 @@ const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
   });
 
   // filtering
-  const excludeFields = ['searchTerm', 'sort', 'limit'];
+  const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
 
   // excluding item from query
   excludeFields.forEach((el) => delete queryObj[el]);
+
+  console.log({ query }, { queryObj });
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -49,14 +50,32 @@ const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
   // sort chaining
   const sortQuery = filterQuery.sort(sort);
 
-  let limit=1;
-  if(query.limit){
-    limit = query.limit as number;
-  }
-  const limitQuery = filterQuery.limit(limit);
+  let page = 1;
+  let limit = 1;
+  let skip = 0;
 
-  console.log({ query, queryObj });
-  return limitQuery;
+  if (query.limit) {
+    limit = Number(query.limit);
+  }
+  if (query.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+
+  const paginateQuery = sortQuery.skip(skip);
+
+  const limitQuery = paginateQuery.limit(limit);
+
+  // field limiting
+  let fields = '-__v';
+  //fields:'name email' formatting
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ');
+  }
+
+  const fieldQuery = await limitQuery.select(fields);
+
+  return fieldQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
