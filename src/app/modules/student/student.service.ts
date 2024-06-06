@@ -4,33 +4,35 @@ import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableFields } from './student.constant';
 
 const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
   // create a copy of the base query to avoid mutation
-  const queryObj = { ...query };
+  //const queryObj = { ...query };
 
   //{email:{$regex:query.searchTerm,$options:i}}
-  const studentSearchableField = ['email', 'name.firstName', 'presentAddress'];
+  /* const studentSearchableFields = ['email', 'name.firstName', 'presentAddress'];
   let searchTerm = '';
 
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
-  }
+  } */
 
   // create search query
-  const searchQuery = Student.find({
-    $or: studentSearchableField.map((field) => ({
+  /* const searchQuery = Student.find({
+    $or: studentSearchableFields.map((field) => ({
       [field]: { $regex: searchTerm, $options: 'i' },
     })),
-  });
+  }); */
 
   // filtering
-  const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+  // const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
 
   // excluding item from query
-  excludeFields.forEach((el) => delete queryObj[el]);
+  //excludeFields.forEach((el) => delete queryObj[el]);
 
-  console.log({ query }, { queryObj });
+  /* console.log({ query }, { queryObj });
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -40,15 +42,15 @@ const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
       populate: {
         path: 'academicFaculty',
       },
-    });
-
-  let sort = 'createdAt'; // default sorting prop
+    }); */
+  // default sorting prop
+  /*  let sort = '-createdAt';
   if (query.sort) {
     sort = query.sort as string;
-  }
+  } */
 
   // sort chaining
-  const sortQuery = filterQuery.sort(sort);
+  /* const sortQuery = filterQuery.sort(sort);
 
   let page = 1;
   let limit = 1;
@@ -64,18 +66,38 @@ const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
 
   const paginateQuery = sortQuery.skip(skip);
 
-  const limitQuery = paginateQuery.limit(limit);
+  const limitQuery = paginateQuery.limit(limit); */
 
   // field limiting
-  let fields = '-__v';
+  //let fields = '-__v';
   //fields:'name email' formatting
-  if (query.fields) {
+  /*  if (query.fields) {
     fields = (query.fields as string).split(',').join(' ');
-  }
+  } */
 
-  const fieldQuery = await limitQuery.select(fields);
+  /*   const fieldQuery = await limitQuery.select(fields);
+  return fieldQuery; */
 
-  return fieldQuery;
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(studentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await studentQuery.modelQuery;
+
+  return result;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
