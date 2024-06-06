@@ -5,8 +5,34 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 
-const getAllAtudentsFromDB = async () => {
-  const result = await Student.find()
+const getAllAtudentsFromDB = async (query: Record<string, unknown>) => {
+  console.log('base query', query);
+  // create a copy of the base query to avoid mutation
+  const queryObj = { ...query };
+
+  //{email:{$regex:query.searchTerm,$options:i}}
+  const studentSearchableField = ['email', 'name.firstName', 'presentAddress'];
+  let searchTerm = '';
+
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  // create search query
+  const searchQuery = Student.find({
+    $or: studentSearchableField.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  // filtering
+  const excludeFields = ['searchTerm', 'sort', 'limit'];
+
+  // excluding item from query
+  excludeFields.forEach((el) => delete queryObj[el]);
+
+  const filterQuery = searchQuery
+    .find(queryObj)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -15,7 +41,22 @@ const getAllAtudentsFromDB = async () => {
       },
     });
 
-  return result;
+  let sort = 'createdAt'; // default sorting prop
+  if (query.sort) {
+    sort = query.sort as string;
+  }
+
+  // sort chaining
+  const sortQuery = filterQuery.sort(sort);
+
+  let limit=1;
+  if(query.limit){
+    limit = query.limit as number;
+  }
+  const limitQuery = filterQuery.limit(limit);
+
+  console.log({ query, queryObj });
+  return limitQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
@@ -27,9 +68,9 @@ const getSingleStudentFromDB = async (id: string) => {
         path: 'academicFaculty',
       },
     });
-    if(!result){
-      throw new AppError(httpStatus.NOT_FOUND,'Invalid student ID!')
-    }
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Invalid student ID!');
+  }
   return result;
 };
 
@@ -58,7 +99,8 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   }
 
   const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
-    new: true,runValidators:true
+    new: true,
+    runValidators: true,
   });
   return result;
 };
