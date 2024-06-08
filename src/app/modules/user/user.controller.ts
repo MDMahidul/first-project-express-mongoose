@@ -30,7 +30,21 @@ const createFaculty: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
+const createAdmin: RequestHandler = catchAsync(async (req, res, next) => {
+  const { password, faculty: adminData } = req.body;
+
+  const result = await UserServices.createAdminIntoDB(password, adminData);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Admin is created successfully',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   createStudent,
   createFaculty,
+  createAdmin,
 };
