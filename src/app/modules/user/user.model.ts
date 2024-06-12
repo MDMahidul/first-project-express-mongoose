@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
-export const userSchema = new Schema<TUser>(
+export const userSchema = new Schema<TUser, UserModel>(
   {
-    id: { type: String, required: true,unique:true },
+    id: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     needsPasswordChange: { type: Boolean, default: true },
     role: { type: String, enum: ['admin', 'student', 'faculty'] },
@@ -23,7 +23,6 @@ export const userSchema = new Schema<TUser>(
 
 // pre save middleware/hook : will work on create() and save()
 userSchema.pre('save', async function (next) {
-   
   const user = this; //document
   //hashing password and save to db
   user.password = await bcrypt.hash(
@@ -40,4 +39,13 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-export const User = model<TUser>('User', userSchema);
+// create static function
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id });
+};
+
+userSchema.statics.isPasswordMatched = async function (palinTextPassword,hashedPassword) {
+  return await bcrypt.compare(palinTextPassword, hashedPassword);
+};
+
+export const User = model<TUser, UserModel>('User', userSchema);
