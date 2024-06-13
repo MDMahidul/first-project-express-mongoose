@@ -3,9 +3,9 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../errors/AppError';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../config';
 import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
+import config from '../config';
 
 /* middleware */
 const auth = (...requiredRoles: TUserRole[]) => {
@@ -47,9 +47,9 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
 
     if (
-      user.passwordChnagedAt &&
+      user.passwordChangedAt &&
       User.isJWTIssuedBeforePasswordChange(
-        user.passwordChnagedAt,
+        user.passwordChangedAt,
         iat as number,
       )
     ) {

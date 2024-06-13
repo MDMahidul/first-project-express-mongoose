@@ -16,7 +16,7 @@ export const userSchema = new Schema<TUser, UserModel>(
       select: 0,
     },
     needsPasswordChange: { type: Boolean, default: true },
-    passwordChnagedAt:{type:Date},
+    passwordChangedAt: { type: Date },
     role: { type: String, enum: ['admin', 'student', 'faculty'] },
     status: {
       type: String,
@@ -54,18 +54,19 @@ userSchema.statics.isUserExistsByCustomId = async function (id: string) {
 };
 
 userSchema.statics.isPasswordMatched = async function (
-  palinTextPassword,
+  plainTextPassword,
   hashedPassword,
 ) {
-  return await bcrypt.compare(palinTextPassword, hashedPassword);
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
 };
 
 userSchema.statics.isJWTIssuedBeforePasswordChange = function (
   passwordChangedTimestamp: Date,
   jwtIssuedTimestamp: number,
 ) {
-  const passwordChangedTime = new Date(passwordChangedTimestamp).getTime()/1000;
-  
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+
   return passwordChangedTime > jwtIssuedTimestamp;
 };
 
