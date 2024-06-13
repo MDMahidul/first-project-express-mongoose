@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
-    Faculty.find().populate('academicFaculty').populate('academicDepartment'),
+    Faculty.find().populate('academicDepartment'),
     query,
   )
     .search(FacultySearchableFields)

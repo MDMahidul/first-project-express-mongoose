@@ -97,13 +97,13 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   }
 
   // find academic faculty info
-  const academicFaculty = await AcademicFaculty.findById(
+ /*  const academicFaculty = await AcademicFaculty.findById(
     payload.academicFaculty,
   );
 
   if (!academicFaculty) {
     throw new AppError(400, 'Academic faculty not found');
-  }
+  } */
 
   // create session
   const session = await mongoose.startSession();

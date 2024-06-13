@@ -5,7 +5,7 @@ export interface TUser {
   id: string;
   password: string;
   needsPasswordChange: boolean;
-  passwordChnagedAt?:Date;
+  passwordChnagedAt?: Date;
   role: 'admin' | 'student' | 'faculty';
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
@@ -14,9 +14,16 @@ export interface TUser {
 // function defination
 export interface UserModel extends Model<TUser> {
   isUserExistsByCustomId(id: string): Promise<TUser>;
-  
-  isPasswordMatched(palinTextPassword:string, hashedPassword:string): Promise<boolean>;
-}
 
+  isPasswordMatched(
+    palinTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
+
+  isJWTIssuedBeforePasswordChange(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ): boolean;
+}
 
 export type TUserRole = keyof typeof USER_ROLE;
