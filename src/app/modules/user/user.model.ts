@@ -5,9 +5,18 @@ import config from '../../config';
 
 export const userSchema = new Schema<TUser, UserModel>(
   {
-    id: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: 0,
+    },
     needsPasswordChange: { type: Boolean, default: true },
+    passwordChnagedAt:{type:Date},
     role: { type: String, enum: ['admin', 'student', 'faculty'] },
     status: {
       type: String,
@@ -41,10 +50,13 @@ userSchema.post('save', function (doc, next) {
 
 // create static function
 userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await User.findOne({ id });
+  return await User.findOne({ id }).select('+password');
 };
 
-userSchema.statics.isPasswordMatched = async function (palinTextPassword,hashedPassword) {
+userSchema.statics.isPasswordMatched = async function (
+  palinTextPassword,
+  hashedPassword,
+) {
   return await bcrypt.compare(palinTextPassword, hashedPassword);
 };
 
