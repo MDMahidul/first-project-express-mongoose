@@ -17,4 +17,11 @@ router.post(
   AuthControllers.refreshToken,
 );
 
+router.post(
+  '/forget-password',
+  validateRequest(AuthVlidation.forgetPasswordValidationSchema),
+  AuthControllers.forgetPassword,
+);
+
+
 export const AuthRoutes = router;
