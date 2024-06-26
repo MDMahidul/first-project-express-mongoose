@@ -8,7 +8,11 @@ import AppError from '../../errors/AppError';
 const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
   const { password, student: studentData } = req.body;
 
-  const result = await UserServices.createStudentIntoDB(password, studentData);
+  const result = await UserServices.createStudentIntoDB(
+    req.file,
+    password,
+    studentData,
+  );
 
   sendResponse(res, {
     success: true,
@@ -21,7 +25,11 @@ const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
 const createFaculty: RequestHandler = catchAsync(async (req, res, next) => {
   const { password, faculty: facultyData } = req.body;
 
-  const result = await UserServices.createFacultyIntoDB(password, facultyData);
+  const result = await UserServices.createFacultyIntoDB(
+    req.file,
+    password,
+    facultyData,
+  );
 
   sendResponse(res, {
     success: true,
@@ -34,7 +42,11 @@ const createFaculty: RequestHandler = catchAsync(async (req, res, next) => {
 const createAdmin: RequestHandler = catchAsync(async (req, res, next) => {
   const { password, faculty: adminData } = req.body;
 
-  const result = await UserServices.createAdminIntoDB(password, adminData);
+  const result = await UserServices.createAdminIntoDB(
+    req.file,
+    password,
+    adminData,
+  );
 
   sendResponse(res, {
     success: true,
@@ -65,7 +77,7 @@ const getMe: RequestHandler = catchAsync(async (req, res, next) => {
 const changeStatus = catchAsync(async (req, res) => {
   const id = req.params.id;
 
-  const result = await UserServices.changeStatus(id,req.body)
+  const result = await UserServices.changeStatus(id, req.body);
 
   sendResponse(res, {
     success: true,
